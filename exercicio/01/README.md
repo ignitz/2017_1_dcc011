@@ -9,6 +9,7 @@ O domínio utilizado foi **Artigos Publicados**.
 
 ### Entidades
 As entidades existentes são:
+
 - **Article**: o artigo em si.
 - **Author**: conjunto dos autores responsáveis pelo artigo.
 - **Publisher**: a revista/jornal onde foi publicado.
