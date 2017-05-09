@@ -37,5 +37,5 @@ $$\pi_{fid} \sigma_{cor="vermelho" and cor="verde"} \left( Forcenedor \bowtie Ca
 
 - Liste os ids dos itens mais caros fornecidos pelo fornecedor Brahma.
 
-> ????
+> http://stackoverflow.com/questions/5493691/how-can-i-find-max-with-relational-algebra 
 
