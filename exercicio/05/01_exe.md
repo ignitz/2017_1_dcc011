@@ -10,21 +10,88 @@
 
 $$\pi_{fnome} \sigma_{cor="vermelho"} \left( Forcenedor \bowtie Catalogo \bowtie Item \right)$$
 
+```SQL
+SELECT
+	fnome
+FROM
+	Fornecedor AS X1
+INNER JOIN
+	Catalogo AS X2 ON X1.fid = X2.fid
+INNER JOIN
+	Item AS X3 ON X2.itemid = X3.itemid
+WHERE X3.cor = "vermelho";
+```
+
 - **Liste os ids de fornecedores que fornecem algum item vermelho ou estão localizados na rua dos Alfeneiros, 4.**
 
 $$\pi_{fid} \sigma_{cor="vermelho"\ \text{OR}\ endereco="rua\ dos\ Alfeneiros,\ 4"} \left( Forcenedor \bowtie Catalogo \bowtie Item \right)$$
 
+```SQL
+SELECT
+	fnome
+FROM
+	Fornecedor AS X1
+INNER JOIN
+	Catalogo AS X2 ON X1.fid = X2.fid
+INNER JOIN
+	Item AS X3 ON X2.itemid = X3.itemid;
+```
+
 - **Liste os ids dos fornecedores que fornecem algum item vermelho e algum item verde.**
 
-$$\pi_{fid} \sigma_{cor="vermelho"\ \text{AND}\ cor="verde"} \left( Forcenedor \bowtie Catalogo \bowtie Item \right)$$
+$${\pi _{fid}}\left( {\left( {Forcenedor \bowtie Catalogo \bowtie Item} \right) \div \left( {{\sigma _{cor = "vermelho"\;{\rm{OR}}\;cor = "verde"}}Item} \right)} \right)$$
+
+```SQL
+SELECT
+	fid
+FROM
+	Catalogo AS X1
+INNER JOIN
+	Item AS X2 ON X1.itemid = X2.itemid
+WHERE
+	X2.cor='vermelho'
+    AND X2.itemid IN (SELECT
+							fid
+						FROM
+							Catalogo AS X1
+						INNER JOIN
+							Item AS X2 ON X1.itemid = X2.itemid
+						WHERE X2.cor='verde');
+```
 
 - **Liste os ids dos fornecedores que fornecem todos os itens.**
 
 $${\pi _{fid}}\left( { \pi_{fid,\ itemid}Catalogo\; \div \;\left( {{\pi _{itemid}}Item} \right)} \right)$$
 
+```sql
+SELECT X1.fid, X1.itemid
+FROM Catalogo as X1
+WHERE NOT EXISTS (
+	SELECT X2.itemid
+    FROM Item as X2
+    WHERE X2.itemid NOT IN (
+		SELECT X3.itemid
+        FROM Item as X3
+        WHERE X3.itemid = X1.itemid
+    ));
+```
+
 - **Liste os ids dos fornecedores que fornecem todos os itens vermelhos.**
 
 $${\pi _{fid}}{\left( {Catalogo\; \div \;\left( {{\pi _{itemid}}{\sigma _{cor = "vermelho"}}Item} \right)} \right)}$$
+
+```sql
+SELECT X1.fid, X1.itemid
+FROM Catalogo as X1
+WHERE NOT EXISTS (
+	SELECT X2.itemid
+    FROM Item as X2
+    WHERE X2.itemid NOT IN (
+		SELECT X3.itemid, X3.cor
+        FROM Item as X3
+        WHERE X3.itemid = X1.itemid AND X3.cor="vermelho"
+    ));
+```
 
 - **Liste pares de ids dos fornecedores nos quais o primeiro id cobra mais por alguma parte que o segundo id.**
 
