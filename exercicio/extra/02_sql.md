@@ -1,25 +1,153 @@
 \newpage
-# Respostas
-## Algebra Relacional
+## SQL
 
+1. 
+```sql
+SELECT Projeto.Sigla, Projeto.NomePro
+FROM Projeto
+MINUS
+SELECT Sigla, NomePro
+FROM Projeto
+INNER JOIN Equipe ON Projeto.Sigla = Equipe.Sigla;
+```
 
-1. ${\pi _{(Sigla,\;NomePro)}}\left( {Projeto - {\pi _{(Sigla,\;NomePro)}}\left( {Projeto \bowtie Equipe} \right)} \right)$
-2. ${\pi _{(Sigla,\;NomePro)}}\left( {{\sigma _{(DataNascCon\; \ge \;1987)}}\left( {Projeto \bowtie Equipe \bowtie Consultor} \right)} \right)$
-3. ${\pi _{(Sigla,\;NomePro)}}\left( {{\sigma _{(Destino = "RS")}}\left( {Projeto \bowtie Equipe \bowtie Consultor \bowtie Viagem} \right)} \right)$
-4. ${\pi _{(Sigla,\;NomePro)}}\left( {{\sigma _{(NomeCli\; \ne \;{\rm{"Kuala Lamper"}})}}\left( {Projeto \bowtie Cliente} \right)} \right)$
-5. ${\pi _{(Sigla,\;NomePro)}}\left( {{\sigma _{(UFNascCon\; = \;{\rm{"PR"}})}}\left( {Projeto \bowtie Equipe \bowtie Consultor} \right)} \right)$
-6. ${\pi _{(UFLoc)}}\left( {{\sigma _{(Destino\; = \;NomeLoc{\rm{ AND }}Sigla\; = \;{\rm{"XP"}})}}\left( {Viagem \times Local} \right)} \right)$
-7. ${\pi _{(CPF,NomeCon)}}\left( {{\sigma _{(UFNascCon = UFLoc\;\;{\rm{AND}}\;\;Destino = NomeLoc)}}\left( {Consultor \bowtie Viagem \times Local} \right)} \right)$
-8. $X = \left( {Projeto \bowtie Equipe \bowtie Consultor \bowtie Viagem} \right) \times Local$  
-   ${\pi _{(SiglaNomePro)}}\left( {{\sigma _{(Destino = NomeLoc\;\;{\rm{AND}}\;\;UFNascCon = UFLoc)}}(X)} \right)$
-9. ${\pi _{(Sigla,NomePro)}}\left( {{\sigma _{UFLoc = "BA"\;\;{\rm{AND}}\;\;Data = 2007\;\;{\rm{AND}}\;\;Destino = NomeLoc}}\left( {Projeto \bowtie Viagem \times Local} \right)} \right)$
+2. 
+```sql
+SELECT X1.Sigla, X1.NomePro
+FROM Projeto X1
+INNER JOIN Equipe X2 ON X1.Sigla = X2.Sigla
+INNER JOIN Consultor X3 ON X2.CPF = X3.CPF
+INNER JOIN Viagem X4 ON X4.CPF = X2.CPF AND X4.Sigla = X2.Sigla
+WHERE X3.DataNascCon >= 1987;
+```
+
+3. 
+```sql
+SELECT X1.Sigla, X1.NomePro
+FROM Projeto AS X1
+INNER JOIN Equipe X2 ON X1.Sigla = X2.Sigla
+INNER JOIN Consultor X3 ON X2.CPF = X3.CPF
+INNER JOIN Viagem X4 ON X4.Sigla = X3.Sigla AND X4.CPF = X2.Equipe
+WHERE Destino = "RS";
+```
+
+4. 
+```sql
+SELECT X1.Sigla, X1.NomePro
+FROM Projeto X1
+INNER JOIN Cliente X2 ON X1.CodCli = X2.Cli
+WHERE X1.NomeCli <> "KualaLamper";
+```
+
+5. 
+```sql
+SELECT X1.Sigla, X1.NomePro
+FROM Projeto X1
+INNER JOIN Equipe X2 ON X1.Sigla = X2.Sigla
+INNER JOIN Consultor X3 ON X2.CPF = X3.CPF
+INNER JOIN Viagem X4 ON X4.CPF = X2.CPF AND X4.Sigla = X2.Sigla
+WHERE X3.UFNascCon = "PR";
+```
+
+6. 
+```sql
+SELECT X2.UFLoc
+FROM Viagem X1
+CROSS JOIN Local X2
+WHERE X1.Sigla = "XP" AND X1.Destino = X2.NomeLoc;
+```
+`CROSS JOIN` = `INNER JOIN` a partir do MySQL 5.0
+
+7. 
+```sql
+SELECT X1.CPF, X1.NomeCon
+FROM Consultor X1
+INNER JOIN Viagem X2 ON X1.CPF = X2.CPF
+CROSS JOIN Local X3
+WHERE X2.Destino = X3.NomeLoc = X2.Destino AND X1.UFNascCon = X3.UFLoc;
+```
+
+8. 
+```sql
+SELECT Projeto.Sigla, Projeto.NomePro
+FROM Projeto
+INNER JOIN Equipe ON Projeto.Sigla = Equipe.Sigla
+INNER JOIN Consultor ON Consultor.CPF = Equipe.CPF
+INNER JOIN Viagem ON Viagem.CPF = Consultor.CPF AND Projeto.Sigla = Viagem.Sigla
+INNER JOIN Local
+WHERE Viagem.Destino = Local.NomeLoc AND Consultor.UFNascCon = Local.UFLoc;
+```
+
+\newpage
+9. 
+```sql
+SELECT Projeto.Sigla, Projeto.NomePro
+FROM Projetos
+INNER JOIN Viagem ON Projetos.Sigla = Viagem.Sigla
+INNER JOIN Local
+WHERE Local.UFloc AND Data = 2007 AND Viagem.Destino = Local.NomeLoc;
+```
+
 10. 
-11. $X = {\rho _{NomeLocal}}\left( {{\pi _{Origem}}\left( {Viagem} \right)} \right) \cup {\rho _{NomeLocal}}\left( {{\pi _{Destino}}\left( {Viagem} \right)} \right)$  
-    ${\pi _{NomeLocal}}\left( {Local} \right) - X$
-12. $X = Consultor \bowtie Equipe \bowtie \left( {{\sigma _{Data < 2007}}Projeto} \right)$  
-    ${\pi _{CPF,Nome}}\left( {Consultor} \right) - {\pi _{CPF,Nome}}\left( X \right)$
-13. $X = Consultor{ \bowtie _{UFNascCon = UFLocal}}Local$  
-    ${\pi _{(CPF,Nome)}}\left( {{\sigma _{UFNascCon = "RJ"}}\left( X \right)} \right)$
-14. $X = Consultor \bowtie Viagem$  
-    ${\sigma _{(X.CPF = EquipeCPF\;\;{\rm{AND}}\;\;X.Sigla \ne Equipe.Sigla)}}\left( {Equipe \times X} \right)$
+```sql
+SELECT NomeLocal
+FROM Local
+MINUS
+SELECT Destino AS NomeLocal
+FROM Viagem;
+```
+
+11. 
+```sql
+SELECT NomeLocal
+FROM Local
+MINUS
+(SELECT Origem AS NomeLocal
+ FROM Viagem
+ UNION
+ SELECT Destino AS NomeLocal
+ From Viagem);
+```
+
+12. 
+```sql
+SELECT CPF, Nome
+FROM Consultor
+MINUS
+(SELECT Consultor.CPF AS CPF, Consultor.Nome AS Nome
+ FROM Consultor AS X1
+ INNER JOIN Equipe AS X2 ON X1.CPF = X2.CPF
+ INNER JOIN (SELECT * 
+             FROM Projeto
+             WHERE Data < 2007) AS X3
+             ON X3.Sigla = X2.Sigla);
+```
+
+13. 
+```sql
+SELECT Consultor.CPF AS CPF, Consultor.Nome AS Nome
+FROM Consultor
+INNER JOIN Local ON Consultor = Local.UFLocal
+WHERE UFNascCon = "RJ";
+```
+
+14. 
+```sql
+SELECT Equipe.CPF AS CPF, Equipe.Nome AS Nome
+FROM Equipe
+INNER JOIN (SELECT *
+            FROM Consultor
+            INNER JOIN Viagem ON Consultor.CPF = Viagem.CPF) AS X
+WHERE X.Consultor.CPF = Equipe.CPF AND X.Viagem.Sigla <> Equipe.Sigla;
+```
+
 15.
+```sql
+SELECT CPF, Nome
+FROM Consultores
+INNER JOIN Equipe ON Consultores.CPF = Equipe.CPF
+INNER JOIN Projeto ON Equipe.Sigla = Projeto.Sigla
+INNER JOIN Cliente ON Cliente.CodCli = Projeto.CodCli
+WHERE Cliente.NomeCli = "Kuala Lumpur";
+```
+
