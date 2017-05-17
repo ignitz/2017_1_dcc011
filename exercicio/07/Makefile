@@ -1,4 +1,4 @@
-OUTPUT_NAME=DCC011_EX8_Yuri_Diego_Santos_Niitsuma.pdf
+OUTPUT_NAME=DCC011_EX7_Yuri_Diego_Santos_Niitsuma.pdf
 INPUT_FILES=00_head.md 01_exe.md 02_sql.md
 
 all:
