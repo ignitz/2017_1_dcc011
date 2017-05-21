@@ -1,4 +1,4 @@
-OUTPUT_NAME=DCC011_EX6_Yuri_Diego_Santos_Niitsuma.pdf
+OUTPUT_NAME=DCC011_EX6_ProofRead_Yuri_Diego_Santos_Niitsuma.pdf
 INPUT_FILES=00_head.md
 
 all:
