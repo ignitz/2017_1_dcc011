@@ -1,3 +1,5 @@
+# Exercício
+
 1. Seja a tabela (não necessariamente normalizada):
 
 `Oferta({CodDisc, AnoSem, SiglaTurma, HoraInicio}, NumHoras, NomeDisc, CreditosDisc)`
